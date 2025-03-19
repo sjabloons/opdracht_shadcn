@@ -1,8 +1,7 @@
 import ToggleTheme from "@/components/ToggleTheme";
 import Stats from "@/components/Stats";
-type LayoutProps = {
-  children: React.ReactNode;
-};
+import { LayoutProps } from "@/types";
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div>
