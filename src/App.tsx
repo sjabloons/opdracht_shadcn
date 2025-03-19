@@ -1,12 +1,14 @@
 import ThemeProvider from "@/components/providers/themeProvider";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-
+import TodoForm from "@/components/TodoForm";
 const App = () => {
   return (
     <div>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Layout>test</Layout>
+        <Layout>
+          <TodoForm />
+        </Layout>
       </ThemeProvider>
     </div>
   );
