@@ -10,14 +10,14 @@
     {
       "id": "3",
       "text": "Go for a run",
-      "completed": true,
+      "completed": false,
       "category": "4",
       "description": "Jog around the neighborhood for 30 minutes"
     },
     {
       "id": "4",
       "text": "Read a book",
-      "completed": true,
+      "completed": false,
       "category": "4",
       "description": "Finish reading the current novel"
     },
@@ -29,16 +29,9 @@
       "description": "Purchase weekly groceries from the local store"
     },
     {
-      "id": "6",
-      "text": "Prepare presentation for client meeting",
-      "completed": false,
-      "category": "1",
-      "description": "Create slides for the upcoming client meeting"
-    },
-    {
       "id": "7",
       "text": "Review project timeline",
-      "completed": false,
+      "completed": true,
       "category": "1",
       "description": "Go over the project timeline and ensure deadlines are met"
     },

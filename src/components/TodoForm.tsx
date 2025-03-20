@@ -13,16 +13,33 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import { useGetCategoriesQuery } from "@/store/categorieApi";
+import { useAddTodoMutation } from "@/store/todoApi";
 import { Category } from "@/types";
+import { toast } from "sonner";
+import { nanoid } from "@reduxjs/toolkit";
 const TodoForm = () => {
   const [todo, setTodo] = useState<string>("");
   const [category, setCategory] = useState<string>("");
 
   const { data: categories, isLoading, isError } = useGetCategoriesQuery();
+  const [addTodo] = useAddTodoMutation();
   console.log(categories);
   console.log("1", isLoading);
 
   console.log("2", isError);
+  const handleAddTodo = async () => {
+    try {
+      await addTodo({
+        id: nanoid(),
+        text: todo,
+        category: category,
+        completed: false,
+        description: "",
+      }).unwrap();
+    } catch (error) {
+      toast.error("Error adding todo");
+    }
+  };
   return (
     <div className={"flex gap-2"}>
       <div className="w-full">
@@ -34,7 +51,7 @@ const TodoForm = () => {
         />
       </div>
       <div>
-        <Select onValueChange={setCategory}>
+        <Select onValueChange={(id) => setCategory(id)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -48,7 +65,7 @@ const TodoForm = () => {
           </SelectContent>
         </Select>
       </div>
-      <Button variant="outline">
+      <Button variant="outline" onClick={handleAddTodo}>
         <Plus />
         Add{" "}
       </Button>

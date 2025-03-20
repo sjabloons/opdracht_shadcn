@@ -2,6 +2,8 @@ import {
   useGetTodosQuery,
   useToggleTodoMutation,
   useRemoveTodoMutation,
+  useAddTodoMutation,
+  useUpdateTodoMutation,
 } from "@/store/todoApi";
 import { useGetCategoriesQuery } from "@/store/categorieApi";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,13 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import TodoFilter from "@/components/TodoFilter";
 import { Category, Todo } from "@/types";
 import { toast } from "sonner";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Pen, Pencil, X } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -24,6 +27,19 @@ import {
   SelectValue,
   SelectGroup,
 } from "@/components/ui/select";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 const TodoList = () => {
@@ -31,11 +47,15 @@ const TodoList = () => {
   const { data: categories } = useGetCategoriesQuery();
   const [toggleTodo] = useToggleTodoMutation();
   const [removeTodo] = useRemoveTodoMutation();
+  const [updateTodo] = useUpdateTodoMutation();
   const [currentPage, setCurrentPage] = useState(1);
   const [todosPerPage, setTodosPerPage] = useState<number>(() => {
     const totalPerPage = localStorage.getItem("totalPerPage");
     return totalPerPage ? parseInt(totalPerPage) : 5;
   });
+  const [isOpen, setIsOpen] = useState<{ [key: string]: boolean }>({});
+  const [todoTitle, setTodoTitle] = useState<string>("");
+  const [todoDescription, setTodoDescription] = useState<string>("");
 
   // Filterstates: standaard op "all" zodat alle todo's zichtbaar zijn bij het laden.
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -51,6 +71,21 @@ const TodoList = () => {
   const handleRemoveTodo = async (todo: Todo) => {
     await removeTodo(todo).unwrap();
     toast.success("Todo deleted");
+  };
+
+  const handleUpdateTodo = async (todo: Todo) => {
+    try {
+      await updateTodo({
+        id: todo.id,
+        completed: todo.completed,
+        text: todoTitle,
+        category: todo.category,
+        description: todoDescription,
+      }).unwrap();
+      toast.success("Todo updated");
+    } catch (error) {
+      return toast.error("Error updating todo");
+    }
   };
 
   // Filterlogica: Als beide filters op "all" staan, geef dan alle todo's terug.
@@ -89,7 +124,7 @@ const TodoList = () => {
   );
 
   return (
-    <div>
+    <div className="mt-4">
       {/* Filtercomponent: hiermee kun je op categorie en status filteren */}
       <TodoFilter
         selectedCategory={selectedCategory}
@@ -101,40 +136,99 @@ const TodoList = () => {
       {/* Todo-lijst met paginatie */}
       <div className="mt-4 flex flex-col gap-2">
         {paginatedTodos?.map((todo: Todo) => (
-          <div key={todo.id} className="flex items-center">
+          <div
+            key={todo.id}
+            className={`flex items-center rounded-lg border p-4 ${todo.completed ? "bg-black" : ""}`}
+          >
             <Checkbox
               checked={todo.completed}
               onCheckedChange={() => handleToggleTodo(todo)}
             />
-            <p className={`flex-1 ${todo.completed ? "line-through" : ""}`}>
+            <p
+              className={`flex-1 ${todo.completed ? "text-gray-400 line-through" : ""} `}
+            >
               {todo.text}
             </p>
-            <div className="ml-5 flex gap-2">
-              {categories?.map((category: Category) =>
-                category.id === todo.category ? (
-                  <div key={category.id}>
-                    <Badge
-                      style={{ backgroundColor: category.color }}
-                      variant="outline"
-                    >
-                      {category.name}
-                    </Badge>
+            <div className="flex items-center gap-10">
+              <div className="ml-5 flex gap-2">
+                {categories?.map((category: Category) =>
+                  category.id === todo.category ? (
+                    <div key={category.id} className="block">
+                      <Badge
+                        style={{ backgroundColor: category.color }}
+                        variant="outline"
+                      >
+                        {category.name}
+                      </Badge>
+                    </div>
+                  ) : null,
+                )}
+              </div>
+
+              <Collapsible
+                open={isOpen[todo.id] || false}
+                onOpenChange={(open) =>
+                  setIsOpen((prev) => ({ ...prev, [todo.id]: open }))
+                }
+                className="w-[350px] space-y-2"
+              >
+                <div className="flex items-center justify-between space-x-4 px-4">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <ChevronDown className="h-4 w-4" />
+                      <span className="sr-only">Toggle</span>
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+
+                <CollapsibleContent className="space-y-2">
+                  <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+                    {todo.description}
                   </div>
-                ) : null,
-              )}
-            </div>
-            <div>
-              <Collapsible>
-                <CollapsibleTrigger>
-                  <ChevronDown />
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <p>{todo.description}</p>
                 </CollapsibleContent>
               </Collapsible>
-            </div>
-            <div>
-              <X onClick={() => handleRemoveTodo(todo)} />
+              <div>
+                <Dialog>
+                  {/* De DialogTrigger wikkelt de icoon in een knop zodat bij klikken de dialog opent */}
+                  <DialogTrigger asChild>
+                    <button className="rounded-full p-2">
+                      <Pencil />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>ChangeTodo</DialogTitle>
+                    <DialogDescription>
+                      <Label htmlFor="todoTitle">Title</Label>
+                      <Input
+                        id="todoTitle"
+                        type="text"
+                        placeholder={todo.text}
+                        onChange={(e) => setTodoTitle(e.target.value)}
+                      />
+
+                      <Label htmlFor="todoDescription">Description:</Label>
+                      <Input
+                        id="todoDescription"
+                        type="text"
+                        placeholder={todo.description}
+                        onChange={(e) => setTodoDescription(e.target.value)}
+                      />
+                    </DialogDescription>
+
+                    <Button onClick={() => handleUpdateTodo(todo)}>
+                      Update
+                    </Button>
+                    <DialogClose asChild>
+                      <button className="mt-4 rounded bg-blue-500 px-4 py-2 text-white">
+                        Sluiten
+                      </button>
+                    </DialogClose>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <div className={`${todo.completed ? "text-gray-400" : ""}`}>
+                <X onClick={() => handleRemoveTodo(todo)} />
+              </div>
             </div>
           </div>
         ))}

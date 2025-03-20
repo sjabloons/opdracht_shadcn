@@ -41,35 +41,23 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="mt-4 flex items-center justify-center gap-2">
       <button
+        onClick={() => onPageChange(totalPages - totalPages + 1)}
+        disabled={currentPage === 1}
+        className="rounded border px-3 py-1 disabled:opacity-50"
+      >
+        First
+      </button>
+      <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="rounded border px-3 py-1 disabled:opacity-50"
       >
-        Prev
+        Previous
       </button>
 
-      {getPageNumbers().map((page, index) =>
-        typeof page === "number" ? (
-          <button
-            key={index}
-            onClick={() => onPageChange(page)}
-            className={`rounded border px-3 py-1 transition-all ${
-              currentPage === page
-                ? "bg-blue-500 font-bold text-white shadow-md"
-                : "hover:bg-gray-200"
-            }`}
-          >
-            {page}
-          </button>
-        ) : (
-          <span
-            key={index}
-            className="rounded border px-3 py-1 transition-all hover:bg-gray-200"
-          >
-            {page}
-          </span>
-        ),
-      )}
+      <p>
+        Page {currentPage} of {totalPages}
+      </p>
 
       <button
         onClick={() => onPageChange(currentPage + 1)}
@@ -77,6 +65,14 @@ const Pagination: React.FC<PaginationProps> = ({
         className="rounded border px-3 py-1 disabled:opacity-50"
       >
         Next
+      </button>
+
+      <button
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+        className="rounded border px-3 py-1 disabled:opacity-50"
+      >
+        Last
       </button>
     </div>
   );

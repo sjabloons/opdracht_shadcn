@@ -3,10 +3,10 @@ const Stats = () => {
   const { data: todos } = useGetTodosQuery();
   return (
     <>
-      <div className="flex justify-between">
-        <p>total: {todos?.length}</p>
-        <p>active: {todos?.filter((todo) => !todo.completed).length}</p>
-        <p>completed: {todos?.filter((todo) => todo.completed).length}</p>
+      <div className="mt-4 flex justify-between">
+        <p>Total: {todos?.length}</p>
+        <p>Active: {todos?.filter((todo) => !todo.completed).length}</p>
+        <p>Completed: {todos?.filter((todo) => todo.completed).length}</p>
         <p>
           {todos?.length
             ? Math.round(
