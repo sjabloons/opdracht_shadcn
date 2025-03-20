@@ -3,7 +3,7 @@ import { Category } from "../types";
 export const categorieApi = createApi({
   reducerPath: "categoriesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/",
+    baseUrl: "https://heliotrope-same-femur.glitch.me/",
   }),
   tagTypes: ["Category"],
   endpoints: (builder) => ({
