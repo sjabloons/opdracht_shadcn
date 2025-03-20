@@ -2,7 +2,6 @@ import {
   useGetTodosQuery,
   useToggleTodoMutation,
   useRemoveTodoMutation,
-  useAddTodoMutation,
   useUpdateTodoMutation,
 } from "@/store/todoApi";
 import { useGetCategoriesQuery } from "@/store/categorieApi";
@@ -11,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import TodoFilter from "@/components/TodoFilter";
 import { Category, Todo } from "@/types";
 import { toast } from "sonner";
-import { ChevronDown, Pen, Pencil, X } from "lucide-react";
+import { ChevronDown, Pencil, X } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -32,8 +31,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogClose,
   DialogTitle,
   DialogTrigger,
@@ -57,7 +54,6 @@ const TodoList = () => {
   const [todoTitle, setTodoTitle] = useState<string>("");
   const [todoDescription, setTodoDescription] = useState<string>("");
 
-  // Filterstates: standaard op "all" zodat alle todo's zichtbaar zijn bij het laden.
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "all",
   );
@@ -88,7 +84,6 @@ const TodoList = () => {
     }
   };
 
-  // Filterlogica: Als beide filters op "all" staan, geef dan alle todo's terug.
   const filteredTodos = todos?.filter((todo: Todo) => {
     if (selectedCategory === "all" && selectedStatus === "all") {
       return true;
@@ -104,12 +99,10 @@ const TodoList = () => {
     return matchCategory && matchStatus;
   });
 
-  // Bereken het aantal pagina's op basis van de gefilterde todo's.
   const totalPages = filteredTodos
     ? Math.ceil(filteredTodos.length / todosPerPage)
     : 0;
 
-  // Als de huidige pagina groter is dan het aantal pagina's (bijv. na filtering), reset naar pagina 1.
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);

@@ -18,9 +18,8 @@ type TodoFilterProps = {
 };
 
 const TodoFilter = ({
-  selectedCategory,
   setSelectedCategory,
-  selectedStatus,
+
   setSelectedStatus,
 }: TodoFilterProps) => {
   const { data: categories } = useGetCategoriesQuery();

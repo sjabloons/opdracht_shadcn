@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { todoApi } from "@/store/todoApi";
 import { categorieApi } from "@/store/categorieApi";
-import logger from "redux-logger";
+
 const store = configureStore({
   reducer: {
     [todoApi.reducerPath]: todoApi.reducer,

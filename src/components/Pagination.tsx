@@ -37,6 +37,7 @@ const Pagination: React.FC<PaginationProps> = ({
     }
     return pages;
   };
+  console.log(getPageNumbers());
 
   return (
     <div className="mt-4 flex items-center justify-center gap-2">
