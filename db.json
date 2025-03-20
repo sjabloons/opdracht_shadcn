@@ -38,7 +38,7 @@
     {
       "id": "7",
       "text": "Review project timeline",
-      "completed": true,
+      "completed": false,
       "category": "1",
       "description": "Go over the project timeline and ensure deadlines are met"
     },
@@ -94,7 +94,7 @@
     {
       "id": "47",
       "text": "Complete online course module",
-      "completed": true,
+      "completed": false,
       "category": "5",
       "description": "Finish the current module of the online course"
     },

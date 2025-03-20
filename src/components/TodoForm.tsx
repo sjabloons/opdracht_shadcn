@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { text } from "stream/consumers";
+
 import { useState } from "react";
 
 import { useGetCategoriesQuery } from "@/store/categorieApi";
