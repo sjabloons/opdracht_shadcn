@@ -24,14 +24,14 @@
     {
       "id": "5",
       "text": "Buy groceries",
-      "completed": true,
+      "completed": false,
       "category": "3",
       "description": "Purchase weekly groceries from the local store"
     },
     {
       "id": "6",
       "text": "Prepare presentation for client meeting",
-      "completed": true,
+      "completed": false,
       "category": "1",
       "description": "Create slides for the upcoming client meeting"
     },
@@ -45,7 +45,7 @@
     {
       "id": "8",
       "text": "Update documentation",
-      "completed": true,
+      "completed": false,
       "category": "1",
       "description": "Add recent changes to the project documentation"
     },
@@ -66,7 +66,7 @@
     {
       "id": "18",
       "text": "Call mom",
-      "completed": true,
+      "completed": false,
       "category": "2",
       "description": "Have a phone call with mom to catch up"
     },
@@ -80,21 +80,21 @@
     {
       "id": "39",
       "text": "30 minute workout",
-      "completed": true,
+      "completed": false,
       "category": "4",
       "description": "Perform a home workout for 30 minutes"
     },
     {
       "id": "40",
       "text": "Drink 8 glasses of water",
-      "completed": true,
+      "completed": false,
       "category": "4",
       "description": "Ensure daily water intake goal is met"
     },
     {
       "id": "47",
       "text": "Complete online course module",
-      "completed": false,
+      "completed": true,
       "category": "5",
       "description": "Finish the current module of the online course"
     },

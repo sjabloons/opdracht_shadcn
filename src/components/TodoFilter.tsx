@@ -28,7 +28,10 @@ const TodoFilter = ({
   return (
     <div className="flex gap-2">
       <div>
-        <Select onValueChange={(id) => setSelectedCategory(id)}>
+        <Select
+          defaultValue="all"
+          onValueChange={(id) => setSelectedCategory(id)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
@@ -43,7 +46,10 @@ const TodoFilter = ({
         </Select>
       </div>
       <div>
-        <Select onValueChange={(status) => setSelectedStatus(status)}>
+        <Select
+          defaultValue="all"
+          onValueChange={(status) => setSelectedStatus(status)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>

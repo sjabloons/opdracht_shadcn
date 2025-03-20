@@ -15,14 +15,29 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from "react";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+} from "@/components/ui/select";
+import { useState, useEffect } from "react";
+import Pagination from "@/components/Pagination";
 const TodoList = () => {
   const { data: todos } = useGetTodosQuery();
   const { data: categories } = useGetCategoriesQuery();
   const [toggleTodo] = useToggleTodoMutation();
   const [removeTodo] = useRemoveTodoMutation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosPerPage, setTodosPerPage] = useState<number>(() => {
+    const totalPerPage = localStorage.getItem("totalPerPage");
+    return totalPerPage ? parseInt(totalPerPage) : 5;
+  });
 
-  //filterstates
+  // Filterstates: standaard op "all" zodat alle todo's zichtbaar zijn bij het laden.
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "all",
   );
@@ -32,19 +47,19 @@ const TodoList = () => {
     await toggleTodo(todo).unwrap();
     toast.success("Todo updated");
   };
+
   const handleRemoveTodo = async (todo: Todo) => {
     await removeTodo(todo).unwrap();
     toast.success("Todo deleted");
   };
-  const filteredTodos = todos?.filter((todo: Todo) => {
-    // Filter op categorie: als er een categorie is geselecteerd, moet todo.category hiermee overeenkomen
 
+  // Filterlogica: Als beide filters op "all" staan, geef dan alle todo's terug.
+  const filteredTodos = todos?.filter((todo: Todo) => {
     if (selectedCategory === "all" && selectedStatus === "all") {
       return true;
     }
     const matchCategory =
       selectedCategory === "all" ? true : todo.category === selectedCategory;
-    // Filter op status: als "completed" of "notCompleted" is geselecteerd, filter daarop
     let matchStatus = true;
     if (selectedStatus === "completed") {
       matchStatus = todo.completed === true;
@@ -53,65 +68,114 @@ const TodoList = () => {
     }
     return matchCategory && matchStatus;
   });
+
+  // Bereken het aantal pagina's op basis van de gefilterde todo's.
+  const totalPages = filteredTodos
+    ? Math.ceil(filteredTodos.length / todosPerPage)
+    : 0;
+
+  // Als de huidige pagina groter is dan het aantal pagina's (bijv. na filtering), reset naar pagina 1.
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [filteredTodos?.length, currentPage, totalPages]);
+
+  const startIndex = (currentPage - 1) * todosPerPage;
+  // Gebruik de paginatedTodos voor de rendering.
+  const paginatedTodos = filteredTodos?.slice(
+    startIndex,
+    startIndex + todosPerPage,
+  );
+
   return (
     <div>
-      {/* Render de filtercomponent en geef de filterstate door */}
+      {/* Filtercomponent: hiermee kun je op categorie en status filteren */}
       <TodoFilter
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}
       />
-      <div className="flex flex-col gap-2">
-        {filteredTodos?.map((todo: Todo) => (
-          <>
-            <div key={todo.id} className="flex">
-              <Checkbox
-                checked={todo.completed}
-                onCheckedChange={() => {
-                  handleToggleTodo(todo);
-                }}
-              />
-              <p
-                key={todo.id}
-                className={`flex-1 ${todo.completed ? "line-through" : ""}`}
-              >
-                {todo.text}
-              </p>
-              <div className="ml-5 flex gap-2">
-                {categories?.map((category: Category) => {
-                  return category.id === todo.category ? (
-                    <div key={category.id}>
-                      <Badge
-                        style={{ backgroundColor: category.color }}
-                        variant="outline"
-                      >
-                        {category.name}
-                      </Badge>
-                    </div>
-                  ) : (
-                    ""
-                  );
-                })}
-              </div>
-              <div>
-                <Collapsible>
-                  <CollapsibleTrigger>
-                    <ChevronDown />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <p>{todo.description}</p>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>{" "}
-              <div>
-                <X onClick={() => handleRemoveTodo(todo)} />
-              </div>
+
+      {/* Todo-lijst met paginatie */}
+      <div className="mt-4 flex flex-col gap-2">
+        {paginatedTodos?.map((todo: Todo) => (
+          <div key={todo.id} className="flex items-center">
+            <Checkbox
+              checked={todo.completed}
+              onCheckedChange={() => handleToggleTodo(todo)}
+            />
+            <p className={`flex-1 ${todo.completed ? "line-through" : ""}`}>
+              {todo.text}
+            </p>
+            <div className="ml-5 flex gap-2">
+              {categories?.map((category: Category) =>
+                category.id === todo.category ? (
+                  <div key={category.id}>
+                    <Badge
+                      style={{ backgroundColor: category.color }}
+                      variant="outline"
+                    >
+                      {category.name}
+                    </Badge>
+                  </div>
+                ) : null,
+              )}
             </div>
-          </>
+            <div>
+              <Collapsible>
+                <CollapsibleTrigger>
+                  <ChevronDown />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <p>{todo.description}</p>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+            <div>
+              <X onClick={() => handleRemoveTodo(todo)} />
+            </div>
+          </div>
         ))}
+      </div>
+
+      {/* Select voor het instellen van het aantal todo's per pagina en pagination */}
+      <div className="mt-4 flex justify-between">
+        <div className="flex items-center gap-2">
+          <p>Show:</p>
+          <Select
+            onValueChange={(value) => setTodosPerPage(Number(value))}
+            value={String(todosPerPage)}
+          >
+            <SelectTrigger className="rounded border px-4 py-2">
+              <SelectValue placeholder="Select todos per page">
+                {todosPerPage} per page
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {[5, 10, 15, 20].map((num) => (
+                  <SelectItem key={num} value={String(num)}>
+                    {num} per page
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
 export default TodoList;

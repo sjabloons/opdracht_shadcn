@@ -22,3 +22,9 @@ export type TodoFilterProps = {
   selectedStatus: string;
   setSelectedStatus: (status: string) => void;
 };
+
+export type PaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
