@@ -39,6 +39,7 @@ const TodoForm = () => {
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All</SelectItem>
             {categories?.map((category: Category) => (
               <SelectItem key={category.name} value={category.id}>
                 {category.name}

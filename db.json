@@ -52,7 +52,7 @@
     {
       "id": "9",
       "text": "Fix bug in login component",
-      "completed": true,
+      "completed": false,
       "category": "1",
       "description": "Resolve the issue causing login failures"
     },

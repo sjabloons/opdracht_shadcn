@@ -15,3 +15,10 @@ export type Category = {
   name: string;
   color: string;
 };
+
+export type TodoFilterProps = {
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
+  selectedStatus: string;
+  setSelectedStatus: (status: string) => void;
+};
