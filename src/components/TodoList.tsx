@@ -37,15 +37,15 @@ const TodoList = () => {
                 );
               })}
             </div>
+            <Collapsible>
+              <CollapsibleTrigger>
+                <ChevronDown />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <p>{todo.description}</p>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
-          <Collapsible>
-            <CollapsibleTrigger>
-              <ChevronDown />
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <p>{todo.description}</p>
-            </CollapsibleContent>
-          </Collapsible>
         </>
       ))}
     </div>
